@@ -1,9 +1,14 @@
 import React from 'react'
+import Header from './components/Header.jsx'
+import Footer from './components/Footer.jsx'
+import Body from './components/Body.jsx'
 
 function App() {
   return (
     <>
-      <h1 className='text-center'>App install</h1>
+      <Header />
+      <Body />
+      <Footer />
     </>
   )
 }
