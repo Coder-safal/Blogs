@@ -4,7 +4,7 @@
   "description": "\"backend blogs\"",
   "main": "index.js",
   "type": "module",
- "scripts": {
+  "scripts": {
     "dev": "nodemon --exec 'node -r dotenv/config' src/index.js"
   },
   "author": "safal bahttarai",
@@ -13,10 +13,14 @@
     "nodemon": "^3.1.4"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.6.0"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0",
+    "multer": "^1.4.5-lts.1"
   }
 }

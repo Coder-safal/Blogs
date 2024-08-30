@@ -21,3 +21,4 @@ connectDB().then(() => {
         console.log(`App is listen on port ${PORT}`);
     });
 })
+

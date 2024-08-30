@@ -16,4 +16,12 @@ app.use(express.static("public")); //store on own server
 
 app.use(cookieParser());
 
+
+// Users Router
+import userRouter from "./routers/users.routers.js";
+app.use("/api/v1/users", userRouter);
+
+
+
+
 export { app };
