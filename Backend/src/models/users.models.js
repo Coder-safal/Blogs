@@ -5,10 +5,10 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
     {
-        name: {
+        fullName: {
             type: String,
             required: true,
-            index: true,
+            // index: true,
         },
         userName: {
             type: String,
@@ -50,9 +50,9 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcryptjs.compare(password, this.password);//check password is correct or not
 }
 
-userSchema.methods.generateAccessToken = async function () {
+userSchema.methods.generateAccessToken = function () {
 
-    return await jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
             userName: this.userName,

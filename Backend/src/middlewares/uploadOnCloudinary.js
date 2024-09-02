@@ -20,9 +20,9 @@ const uploadOncloudinary = async function (localpath) {
                     resource_type: "image",
                 }
             )
-        console.log("File is uploded in cloudinary succesfully:  ", uploadResult.url)
+        // console.log("File is uploded in cloudinary succesfully:  ", uploadResult.url)
 
-        // fs.unlinkSync(localpath);
+        fs.unlinkSync(localpath);
         return uploadResult.url;
     } catch (error) {
         fs.unlinkSync(localpath);

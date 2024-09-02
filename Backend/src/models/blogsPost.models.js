@@ -18,6 +18,7 @@ const blogPostSchema = new Schema(
         likes: {
             type: Schema.Types.ObjectId,
             ref: "Like",
+            // default: 0,
         },
         comment: [
             {
