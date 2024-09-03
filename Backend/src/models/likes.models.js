@@ -11,10 +11,6 @@ const likeSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Comment",
         },
-        user: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-        },
     },
     {
         timestamps: true,

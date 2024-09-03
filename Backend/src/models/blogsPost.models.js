@@ -15,11 +15,6 @@ const blogPostSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "User",
         },
-        likes: {
-            type: Schema.Types.ObjectId,
-            ref: "Like",
-            // default: 0,
-        },
         comment: [
             {
                 type: Schema.Types.ObjectId,

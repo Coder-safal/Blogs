@@ -23,7 +23,7 @@ const uploadPost = asyncHandler(async (req, res) => {
     const postCreate = await BlogPost.create({
         title,
         content,
-        author: req.user?._id,
+        author: new mongoose.Types.ObjectId(req.user?._id),
     })
 
     if (!postCreate) {
