@@ -27,10 +27,47 @@ const uploadPost = asyncHandler(async (req, res) => {
     }
 
 
+    const postResponse = await BlogPost.aggregate([
+        {
+            $match: {
+                _id: postCreate?._id,
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author",
+                pipeline: [
+                    {
+                        $project: {
+                            _id: 0,
+                            userName: 1,
+                            email: 1,
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                author: { $arrayElemAt: ["$author", 0] }
+            }
+        },
+        {
+            $project: {
+                comment: 0,
+            }
+        }
+    ]);
+
+    console.log(postResponse);
+
     return res.status(201)
         .json(new ApiResponse(
             201,
-            postCreate,
+            postResponse,
             "blogs Upload succesfully!")
         );
 
@@ -39,12 +76,13 @@ const uploadPost = asyncHandler(async (req, res) => {
 
 const deletePost = asyncHandler(async (req, res) => {
 
-    const { PostId } = req.params;
+    const { postId } = req.params;
 
-    if (!PostId || !isValidObjectId(PostId)) {
+
+    if (!postId || !isValidObjectId(postId)) {
         throw new ApiError(
             401,
-            "Invalid PostId",
+            "Invalid postId",
         );
     }
 
@@ -57,7 +95,7 @@ const deletePost = asyncHandler(async (req, res) => {
         );
     }
 
-    const deletePost = await BlogPost.findByIdAndDelete(PostId);
+    const deletePost = await BlogPost.findByIdAndDelete(postId).select("-author -comment -_id")
 
     if (!deletePost) {
         throw new ApiError(
@@ -81,6 +119,7 @@ const updatePost = asyncHandler(async (req, res) => {
 
     const { postId } = req.params;
     const { title, description } = req.body;
+
 
     if (!postId || !isValidObjectId(postId)) {
         throw new ApiError(
@@ -117,16 +156,17 @@ const updatePost = asyncHandler(async (req, res) => {
         }
     );
 
+
     if (!postUpdate) {
         throw new ApiError(
             401,
-            "post cann't update",
+            "post can't update this post isn't exists!",
         );
     }
 
 
     return res.status(200).json(
-        new ApiError(
+        new ApiResponse(
             200,
             postUpdate,
             "post update succesfully!",

@@ -21,11 +21,9 @@ app.use(cookieParser());
 import userRouter from "./routers/users.routers.js";
 app.use("/api/blogs/v1/users", userRouter);
 
+// blogs Post Routers
+import blogPostRouter from "./routers/blogPost.routers.js";
+app.use("/api/blogs/v1/blogsPost", blogPostRouter);
 
 
-app.get("/", (req, res) => {
-    res.status(200).json({
-        message: "ok",
-    });
-})
 export { app };
