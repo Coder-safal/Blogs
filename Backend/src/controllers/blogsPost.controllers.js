@@ -1,10 +1,6 @@
 import { asyncHandler } from "../utils/AsyncHandler.utils.js";
 import { ApiError } from "../utils/ApiError.utils.js";
 import { ApiResponse } from "../utils/ApiResponse.utils.js";
-import { User } from "../models/users.models.js";
-import jwt from "jsonwebtoken";
-
-import { uploadOncloudinary } from "../middlewares/uploadOnCloudinary.js";
 import { BlogPost } from "../models/blogsPost.models.js";
 import mongoose, { isValidObjectId, Mongoose } from "mongoose";
 
@@ -40,56 +36,6 @@ const uploadPost = asyncHandler(async (req, res) => {
 
 });
 
-
-
-/* 
-const countPostLike = asyncHandler(async (req, res) => {
-
-    const { post_id } = req.params;
-
-    if (!post_id || isValidObjectId(post_id)) {
-        throw new ApiError(401, "This is not valid post id");
-    }
-
-    const countLike = await BlogPost.aggregate([
-        {
-            $match: {
-                _id: post_id,
-            }
-        },
-        {
-            $lookup: {
-                from: "Like",
-                localField: "likes",
-                foreignField: "_id",
-                as: "totallikes",
-            }
-        },
-        {
-            $project: {
-                totalLikes: { $size: "$totallikes" },
-            }
-        }
-
-    ]);
-
-    if (!countLike) {
-        throw new ApiError(
-            500,
-            "Errors while counting like!",
-        )
-    }
-
-    return res.status(200).json(
-        new ApiResponse(
-            200,
-            countLike,
-            "Post like count succesfully!!",
-        )
-    )
-
-}); 
-*/
 
 const deletePost = asyncHandler(async (req, res) => {
 

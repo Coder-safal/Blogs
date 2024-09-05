@@ -93,9 +93,54 @@ const toogleCommentLike = asyncHandler(async (req, res) => {
 })
 
 
+const countPostLike = asyncHandler(async (req, res) => {
 
+    const { postId } = req.params;
+
+    if (!postId || isValidObjectId(postId)) {
+        throw new ApiError(401, "Invalid post Id");
+    }
+
+    const totalPostLike = await Like.find({ _id: postId });
+
+    if (!totalPostLike) {
+        throw new ApiError(500, "Internal Errors while counting like!");
+    }
+
+    return res.status(200).json(
+        200,
+        {
+            totalLike: totalPostLike.length,
+        },
+        "Post like count succesfully!",
+    );
+});
+const countCommentLike = asyncHandler(async (req, res) => {
+
+    const { commentId } = req.params;
+
+    if (!commentId || isValidObjectId(commentId)) {
+        throw new ApiError(401, "Invalid post Id");
+    }
+
+    const totalCommentLike = await Like.find({ _id: commentId });
+
+    if (!totalCommentLike) {
+        throw new ApiError(500, "Internal Errors while counting like!");
+    }
+
+    return res.status(200).json(
+        200,
+        {
+            totalLike: totalCommentLike.length,
+        },
+        "Comment like count succesfully!",
+    );
+});
 
 export {
     tooglePostLike,
     toogleCommentLike,
+    countPostLike,
+    countCommentLike,
 }

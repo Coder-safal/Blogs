@@ -1,9 +1,10 @@
-import mongoose, { isValidObjectId, mongo } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { asyncHandler } from "../utils/AsyncHandler.utils";
 import { ApiError } from "../utils/ApiError.utils";
 import { Comment } from "../models/comments.models";
 import { ApiResponse } from "../utils/ApiResponse.utils";
 import { BlogPost } from "../models/blogsPost.models";
+// import { User } from "../models/users.models";
 
 
 const postComment = asyncHandler(async (req, res, next) => {
@@ -102,7 +103,87 @@ const deletePostComment = asyncHandler(async (req, res, next) => {
 
 });
 
+const getPostComment = asyncHandler(async (req, res) => {
+    const { postId } = req.params;
+
+
+    if (!postId || isValidObjectId(postId)) {
+        throw new ApiError(401, "Invalid post Id");
+    }
+
+
+    const allComments = await BlogPost.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(postId),
+            }
+        },
+        {
+            $lookup: {
+                from: "Comment",
+                localField: "comment",
+                foreignField: "_id",
+                as: "AllComments",
+                pipeline: [
+                    {
+                        from: "User",
+                        localField: "user",
+                        foreignField: "_id",
+                        as: "users",
+                    },
+                    {
+                        $project: {
+                            description: 1,
+                            users: 1,
+                            likes: 1,
+                        }
+                    }
+                ]
+            }
+        },
+
+    ]);
+
+    if (!allComments) {
+        throw new ApiError(500, "Internal errors")
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, allComments, "All comments fetch succesfully!")
+    );
+
+});
+
+const countpostComments = asyncHandler(async (req, res) => {
+
+    const { postId } = req.params;
+
+
+    if (!postId || isValidObjectId(postId)) {
+        throw new ApiError(401, "Invalid post Id");
+    }
+
+
+    const totalComments = await Comment.find({ _id: postId });
+
+    if (!totalComments) {
+        throw new ApiError(401, "There is no comments");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, {
+            totalComments: totalComments.likes,
+        },
+            "Total Comments Count succesfully!!",
+        )
+    )
+
+});
+
+
 export {
     deletePostComment,
     postComment,
+    getPostComment,
+    countpostComments,
 }
