@@ -1,22 +1,53 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 function Header() {
     return (
         <>
-            <div className='text-black  bg-slate-600 h-16 flex justify-between'>
-                <div className='h-[90px] w-[90px] border-black border-2 rounded-full flex justify-center items-center '>
-                    <img src="../public/image1.png" alt="safal"  className='h-[80px] w-[80px] rounded-full
-                     items-center
-                    '/>
+            <div className='h-[100px] w-[100%] bg-slate-600 sticky top-0 flex text-white justify-between items-center'>
+                <div className='h-[80px] pl-10'>
+                    <img src="https://images-platform.99static.com//_kcamHLCfSPOt7e9zH08t7UbxzI=/342x1130:958x1746/fit-in/500x500/99designs-contests-attachments/77/77610/attachment_77610300"
+                        className='h-[80px] rounded-full'
+                        alt="" />
                 </div>
-                <div className='sm:w-[350px] flex justify-between pr-4 items-center'>
-                    <li className='max-h-[50px] bg-cyan-500 px-5 list-none rounded-sm py-1.5 text-center
-                     hover:bg-cyan-600 hover:text-white
-                    '>Signup</li>
-                    <li className='max-h-[50px] bg-cyan-500 px-5 list-none rounded-sm py-1.5 text-center
-                     hover:bg-cyan-600 hover:text-white
-                    '>login</li>
+                {/* ${isActive ? "text-orange-300-700" : "text-gray-700"} */}
+                <div className='w-[30%]  flex justify-around'>
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            ` px-3 py-1.5 rounded-sm ${isActive ? "text-orange-300" : "text-white"} lg:hover:text-blue-400 `
+                        }
+                    > Home</NavLink>
+                    <NavLink
+                        to="/about"
+                        className={({ isActive }) =>
+                            ` px-3 py-1.5 rounded-sm ${isActive ? "text-orange-300" : "text-white"} lg:hover:text-blue-400 `
+                        }
+                    > About</NavLink>
+                    <NavLink
+                        to="/contact"
+                        className={({ isActive }) =>
+                            ` px-3 py-1.5 rounded-sm ${isActive ? "text-orange-300" : "text-white"} lg:hover:text-blue-400 `
+                        }
+                    > Contact</NavLink>
+
                 </div>
+
+                <div className='pr-10 w-[20%] flex justify-evenly'>
+                    <NavLink
+                        to="/signin"
+                        className={({ isActive }) =>
+                            ` px-3 py-1.5 rounded-sm ${isActive ? "text-orange-300" : "text-white"} lg:hover:text-blue-400 `
+                        }
+                    >signin</NavLink>
+                    <NavLink
+                        to="/signup"
+                        className={({ isActive }) =>
+                            ` px-3 py-1.5 rounded-sm ${isActive ? "text-orange-300" : "text-white"} lg:hover:text-blue-400 `
+                        }
+                    >Signup</NavLink>
+                </div>
+
             </div>
         </>
     )
