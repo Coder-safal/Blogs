@@ -1,18 +1,19 @@
 import mongoose, { isValidObjectId } from "mongoose";
-import { asyncHandler } from "../utils/AsyncHandler.utils";
-import { ApiError } from "../utils/ApiError.utils";
-import { Comment } from "../models/comments.models";
-import { ApiResponse } from "../utils/ApiResponse.utils";
-import { BlogPost } from "../models/blogsPost.models";
+import { asyncHandler } from "../utils/AsyncHandler.utils.js";
+import { ApiError } from "../utils/ApiError.utils.js";
+import { Comment } from "../models/comments.models.js";
+import { ApiResponse } from "../utils/ApiResponse.utils.js";
+import { BlogPost } from "../models/blogsPost.models.js";
 // import { User } from "../models/users.models";
 
+// const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const postComment = asyncHandler(async (req, res, next) => {
 
     const { postId } = req.params;
     const { description } = req.body;
 
-    if (!postId || !isValidObjectId(postId)) {
+    if (!postId || !mongoose.isValidObjectId(postId)) {
         throw new ApiError(401, "Invalid postId");
     }
 
@@ -25,9 +26,9 @@ const postComment = asyncHandler(async (req, res, next) => {
     }
 
     const commentPost = await Comment.create({
-        user: new mongoose.Types.ObjectId(postId),
-        description,
-        postId: new mongoose.Types.ObjectId(req.user?._id),
+        user: new mongoose.Types.ObjectId(req.user?._id),
+        description: description,
+        post: new mongoose.Types.ObjectId(postId),
     });
 
     if (!commentPost) {
@@ -38,7 +39,7 @@ const postComment = asyncHandler(async (req, res, next) => {
         postId,
         {
             $push: {
-                comment: commentPost?._id,
+                comments: commentPost?._id,
             }
         },
         { new: true },
@@ -80,7 +81,7 @@ const deletePostComment = asyncHandler(async (req, res, next) => {
     const deleteCommentBlogPost = await BlogPost.findByIdAndUpdate(
         postId,
         {
-            $pull: {
+            $push: {
                 comment: commentId,
             }
         },
@@ -106,11 +107,9 @@ const deletePostComment = asyncHandler(async (req, res, next) => {
 const getPostComment = asyncHandler(async (req, res) => {
     const { postId } = req.params;
 
-
-    if (!postId || isValidObjectId(postId)) {
+    if (!postId || !isValidObjectId(postId)) {
         throw new ApiError(401, "Invalid post Id");
     }
-
 
     const allComments = await BlogPost.aggregate([
         {
@@ -120,36 +119,67 @@ const getPostComment = asyncHandler(async (req, res) => {
         },
         {
             $lookup: {
-                from: "Comment",
-                localField: "comment",
+                from: "comments",
+                localField: "comments",
                 foreignField: "_id",
                 as: "AllComments",
                 pipeline: [
                     {
-                        from: "User",
-                        localField: "user",
-                        foreignField: "_id",
-                        as: "users",
+                        $lookup:
+                        {
+                            from: "users",
+                            localField: 'user',
+                            foreignField: "_id",
+                            as: "users",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        userName: 1,
+                                        fullName: 1,
+                                        email: 1,
+                                        _id: 0,
+                                        avatar: 1,
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            users: { $arrayElemAt: ["$users", 0] }
+
+                        }
                     },
                     {
                         $project: {
-                            description: 1,
-                            users: 1,
-                            likes: 1,
+                            user: 0,
+                            _id: 0,
+                            post: 0,
+                            likes: 0,
+
                         }
                     }
-                ]
+                ],
+
             }
         },
+        // {
+        //     $addFields: {
+        //         totalComments: { $size: +"$AllComments" } //to count total comments
+        //     }
+        // }
 
     ]);
+
+
+    console.log("All comments: ", allComments);
 
     if (!allComments) {
         throw new ApiError(500, "Internal errors")
     }
 
     return res.status(200).json(
-        new ApiResponse(200, allComments, "All comments fetch succesfully!")
+        new ApiResponse(200, allComments[0].AllComments, "All comments fetch succesfully!")
     );
 
 });
@@ -159,20 +189,21 @@ const countpostComments = asyncHandler(async (req, res) => {
     const { postId } = req.params;
 
 
-    if (!postId || isValidObjectId(postId)) {
+    if (!postId || !isValidObjectId(postId)) {
         throw new ApiError(401, "Invalid post Id");
     }
 
 
-    const totalComments = await Comment.find({ _id: postId });
+    const totalComments = await Comment.find({ post: postId });
 
     if (!totalComments) {
         throw new ApiError(401, "There is no comments");
     }
 
+
     return res.status(200).json(
         new ApiResponse(200, {
-            totalComments: totalComments.likes,
+            totalComments: totalComments.length,
         },
             "Total Comments Count succesfully!!",
         )

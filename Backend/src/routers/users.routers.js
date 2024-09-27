@@ -2,7 +2,8 @@
 import { Router } from "express";
 import {
     registerUsers, loginUser, verifyJwt,
-    changePassword, logoutUser,
+    changePassword, logoutUser, checkUserLogin,
+    updateAvatar, deleteAvatar, getYourAllPost
 } from "../controllers/users.controllers.js"
 import { upload } from "../middlewares/multer.js";
 
@@ -24,4 +25,14 @@ router.route("/changePassword").patch(verifyJwt, changePassword);
 // LogoutUser
 router.route("/logout").get(verifyJwt, logoutUser);
 
+// check Already Login or not
+router.route("/checkUserLogin").get(verifyJwt, checkUserLogin);
+router.route("/updateAvatar").patch(verifyJwt, upload.single('avatar'), updateAvatar);
+
+
+// delete images from cloudinary
+router.route("/deleteAvatar").delete(verifyJwt, deleteAvatar);
+
+// get your all Posts
+router.route("/getYourAllPost").get(verifyJwt, getYourAllPost);
 export default router;

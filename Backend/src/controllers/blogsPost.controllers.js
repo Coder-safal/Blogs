@@ -3,6 +3,8 @@ import { ApiError } from "../utils/ApiError.utils.js";
 import { ApiResponse } from "../utils/ApiResponse.utils.js";
 import { BlogPost } from "../models/blogsPost.models.js";
 import mongoose, { isValidObjectId, Mongoose } from "mongoose";
+import { Like } from "../models/likes.models.js";
+import { Comment } from "../models/comments.models.js";
 
 const uploadPost = asyncHandler(async (req, res) => {
 
@@ -57,17 +59,17 @@ const uploadPost = asyncHandler(async (req, res) => {
         },
         {
             $project: {
-                comment: 0,
+                comments: 0,
             }
         }
     ]);
 
-    console.log(postResponse);
+    // console.log(postResponse);
 
     return res.status(201)
         .json(new ApiResponse(
             201,
-            postResponse,
+            postResponse[0],
             "blogs Upload succesfully!")
         );
 
@@ -94,6 +96,13 @@ const deletePost = asyncHandler(async (req, res) => {
             "you aren't authorized users to delete this post",
         );
     }
+
+    const resComment = await Comment.deleteMany({ post: postId });
+
+    const resLike = await Like.deleteMany({ post: postId });
+
+    console.log("resComment: ",resComment);
+    console.log("resLike: ",resLike);
 
     const deletePost = await BlogPost.findByIdAndDelete(postId).select("-author -comment -_id")
 
@@ -173,10 +182,31 @@ const updatePost = asyncHandler(async (req, res) => {
         )
     );
 
+});
+
+const getAllPost = asyncHandler(async (req, res) => {
+
+    try {
+        const posts = await BlogPost.find()
+            .populate({
+                path: 'author',
+                select: "-password -refreshToken"
+            })
+            .exec();
+
+
+        return res.status(200).json(
+            new ApiResponse(200, posts, "All post fetch succesfully!")
+        );
+    } catch (error) {
+        throw new ApiError(500, "Internal server Errors!!");
+    }
+
 })
 
 export {
     uploadPost,
     deletePost,
     updatePost,
+    getAllPost
 }

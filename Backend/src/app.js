@@ -25,5 +25,23 @@ app.use("/api/blogs/v1/users", userRouter);
 import blogPostRouter from "./routers/blogPost.routers.js";
 app.use("/api/blogs/v1/blogsPost", blogPostRouter);
 
+// like routers
+import likeRouter from "./routers/likes.routers.js";
+app.use("/api/blogs/v1/like", likeRouter)
+
+// Comments Router
+import commentPostRouter from "./routers/comments.routers.js";
+app.use("/api/blogs/v1/commentPost", commentPostRouter);
+
+
+// errors handle=>this middleware placed at the last of routes
+app.use((err, req, res, next) => {
+
+    res.status(err.statusCode || 500).json({
+        message: err.message || "An unknown error occurred",
+        statusCode: err.statusCode || 500,
+    });
+});
+
 
 export { app };

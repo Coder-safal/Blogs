@@ -1,8 +1,8 @@
 import mongoose, { isValidObjectId, mongo } from "mongoose";
-import { ApiError } from "../utils/ApiError.utils";
-import { asyncHandler } from "../utils/AsyncHandler.utils";
+import { ApiError } from "../utils/ApiError.utils.js";
+import { asyncHandler } from "../utils/AsyncHandler.utils.js";
 import { Like } from "../models/likes.models.js";
-import { ApiResponse } from "../utils/ApiResponse.utils";
+import { ApiResponse } from "../utils/ApiResponse.utils.js";
 
 const tooglePostLike = asyncHandler(async (req, res) => {
 
@@ -16,6 +16,8 @@ const tooglePostLike = asyncHandler(async (req, res) => {
     }
 
     const postLikeExists = await Like.findOne({ likeBy: req.user?._id, post: PostId });
+
+    // console.log("like status: ", postLikeExists);
 
     if (postLikeExists) {
         const details = await Like.findByIdAndDelete(postLikeExists?._id);
@@ -97,22 +99,28 @@ const countPostLike = asyncHandler(async (req, res) => {
 
     const { postId } = req.params;
 
-    if (!postId || isValidObjectId(postId)) {
+    if (!postId || !isValidObjectId(postId)) {
         throw new ApiError(401, "Invalid post Id");
     }
 
-    const totalPostLike = await Like.find({ _id: postId });
+    if (!req.user) {
+        throw new ApiError(401, "you are not authorized users to fetch post Like");
+    }
+
+    const totalPostLike = await Like.find({ post: postId });
 
     if (!totalPostLike) {
         throw new ApiError(500, "Internal Errors while counting like!");
     }
 
     return res.status(200).json(
-        200,
-        {
-            totalLike: totalPostLike.length,
-        },
-        "Post like count succesfully!",
+        new ApiResponse(
+            200,
+            {
+                totalLike: totalPostLike.length,
+            },
+            "Post like count succesfully!",
+        )
     );
 });
 const countCommentLike = asyncHandler(async (req, res) => {
