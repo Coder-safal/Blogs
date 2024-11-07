@@ -11,8 +11,7 @@ function Header() {
     const url = null;
     return (
         <>
-            <div className='flex h-[80px]  w-[100%] bg-slate-800 text-white sticky top-0'>
-
+            <div className='flex h-[80px] w-[100%] bg-slate-800 text-white sticky top-0 z-50'>
 
                 <div className=' flex w-[80%] items-center justify-evenly '>
                     <NavLink
@@ -75,9 +74,10 @@ function Header() {
                             </summary>
                             <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                                 <li><Link className='font-semibold'>Change Profile</Link></li>
+                                <li><Link to={"/userInfo"} className='font-semibold'>About Me</Link></li>
                                 <li><Link to={"/changePassword"} className='font-semibold'>Change Password</Link></li>
-                                <li><Link className='font-semibold'>Change Username</Link></li>
-                                <li><Link className='font-semibold'>Change Email</Link></li>
+                                <li><Link to={"/changeUserName"} className='font-semibold'>Change Username</Link></li>
+                                <li><Link to={"/changeEmail"} className='font-semibold'>Change Email</Link></li>
                                 <li><Link to="/logout" className='font-semibold'>Log Out</Link></li>
                             </ul>
                         </details>

@@ -22,7 +22,7 @@ const DisplaySinglePost = () => {
 
     const handleDelete = () => {
         console.log("Delete Handle!")
-        axios.delete(`/api/blogs/v1/blogsPost/deletePost/${postId}`).then((response) => {
+        axios.delete(`/api/blogs/v1/blogsPost/deletePost/${post?._id}`).then((response) => {
             alert("Post Delete Succesfully!");
             navigate("/home");
 

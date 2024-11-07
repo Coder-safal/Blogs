@@ -14,20 +14,19 @@ import Header from './components/home/Header.jsx'
 import { usePostStore } from './statemanagement/GetAllPosts.jsx'
 import ChangePassword from './components/update/ChangePassword.jsx'
 import EditPost from './components/update/EditPost.jsx'
+import CardPost from './components/blogs/CardPost.jsx'
+import UserInfo from './components/userInfo/UserInfo.jsx'
+import ChangeEmail from './components/update/ChangeEmail.jsx'
+import ChangeUserName from './components/update/ChangeUserName.jsx'
+import CheckUsersLogin from './context/CheckUsersLogin.jsx'
 
 function App() {
   const { authUser, setAuthUsers } = useAuth();
-  const { posts } = usePostStore();
-  // console.log("App posts value: ", posts); can't works properly
   const location = useLocation();
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("user"))
-    if (data) {
-      setAuthUsers(data);
-    }
 
-  }, [setAuthUsers])
-  console.log("authUsers in app: ", authUser);
+  CheckUsersLogin();
+
+  // console.log("authUsers in app: ", authUser);
   return (
     <>
       {location.pathname !== "/" && <Header />}
@@ -39,11 +38,15 @@ function App() {
         <Route path='/signup' element={!authUser ? <Signup /> : <Navigate to={"/home"} />} />
         <Route path='/logout' element={authUser ? <Logout /> : <Navigate to={"/home"} />} />
         <Route path='/singlePost' element={authUser ? <DisplaySinglePost /> : <Navigate to={"/home"} />} />
+        <Route path='/cardPost' element={authUser ? <CardPost /> : <Navigate to={"/home"} />} />
         <Route path='/changePassword' element={authUser ? <ChangePassword /> : <Navigate to={"/home"} />} />
+        <Route path='/changeEmail' element={authUser ? <ChangeEmail /> : <Navigate to={"/home"} />} />
+        <Route path='/changeUserName' element={authUser ? <ChangeUserName /> : <Navigate to={"/home"} />} />
         <Route
           path="/editPost/:postId"
           element={authUser ? <EditPost /> : <Navigate to="/home" />}
         />
+        <Route path='userInfo' element={authUser ? <UserInfo /> : <Navigate to={"/home"} />} />
       </Routes>
 
     </>

@@ -1,14 +1,12 @@
 import React from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router'
-import { useAuth } from '../../context/AunthUsers'
 import axios from 'axios';
 
 
 function UploadBlogPost() {
-    // const { authUser, setAuthUsers } = useAuth();
+
     const authUser = JSON.parse(localStorage.getItem("user"));
-    console.log("Auth users in uploadpost: ", authUser?.userName);
     const navigate = useNavigate()
     const {
         register,

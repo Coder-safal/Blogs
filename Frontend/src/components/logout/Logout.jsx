@@ -12,7 +12,6 @@ function Logout() {
 
 
         axios.get("/api/blogs/v1/users/logout").then((response) => {
-            console.log("Response: ", response.data);
             if (response.data) {
                 localStorage.removeItem("user");
                 setAuthUsers(null);
@@ -21,9 +20,11 @@ function Logout() {
 
             }
         }).catch((error) => {
-            console.log("Errors: ", error);
-            // alert("Error: " + error.response.data.message);
-            alert("Please try again!");
+            localStorage.removeItem("user");
+            alert("Error: " + error.response.data.message);
+            navigate("/home");
+            setAuthUsers(null);
+            // alert("Please try again!");
         })
 
 

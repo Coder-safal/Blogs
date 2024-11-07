@@ -21,8 +21,6 @@ function Signup() {
             email: data.email
         }
         axios.post("/api/blogs/v1/users/register", userInfo).then((response) => {
-
-            // console.log("users register data is: ", response.data.message);
             if (response.data) {
                 alert(response.data.message);
                 navigate("/login");

@@ -26,7 +26,6 @@ function ChangePassword() {
 
             }).then((response) => {
                 if (response.data) {
-                    console.log("Response is: ", response.data)
                     alert("Change succesfully!")
                     navigate("/home")
                 }
